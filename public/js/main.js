@@ -283,13 +283,13 @@ var Snippet = {
     var _hmt = _hmt || [];
     (function() {
       var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?58aefbf3de3372645a3e8796d7601fee";
+      hm.src = "//hm.baidu.com/hm.js?07662ba4124dcd9e51dcab26ae7dd6fa";
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(hm, s);
     })();
   },
   duoshuo: function(){
-    window.duoshuoQuery = {short_name:"barretlee"};
+    window.duoshuoQuery = {short_name:"snippets"};
     (function() {
       var ds = document.createElement('script');
       ds.type = 'text/javascript';ds.async = true;
