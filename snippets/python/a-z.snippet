@@ -1,0 +1,31 @@
+---
+title: 产生a-z的字符串
+---
+
+```
+print ''.join(map(chr,range(97,123)))
+```
+
+```
+import string
+print string.ascii_lowercase
+print string.ascii_uppercase
+```
+
+用于通过lambda构造url：
+```
+start_urls = [(lambda q:"http://dict.okb.com/search.asp?ABC={}".format(q))(x) for x in string.ascii_uppercase]
+print start_urls
+```
+输出结果：
+```
+['http://dict.okb.com/search.asp?ABC=A', 'http://dict.okb.com/search.asp?ABC=B', 'http://dict.okb.com/search.asp?ABC=C', 
+ 'http://dict.okb.com/search.asp?ABC=D', 'http://dict.okb.com/search.asp?ABC=E', 'http://dict.okb.com/search.asp?ABC=F', 
+ 'http://dict.okb.com/search.asp?ABC=G', 'http://dict.okb.com/search.asp?ABC=H', 'http://dict.okb.com/search.asp?ABC=I', 
+ 'http://dict.okb.com/search.asp?ABC=J', 'http://dict.okb.com/search.asp?ABC=K', 'http://dict.okb.com/search.asp?ABC=L', 
+ 'http://dict.okb.com/search.asp?ABC=M', 'http://dict.okb.com/search.asp?ABC=N', 'http://dict.okb.com/search.asp?ABC=O',
+ 'http://dict.okb.com/search.asp?ABC=P', 'http://dict.okb.com/search.asp?ABC=Q', 'http://dict.okb.com/search.asp?ABC=R', 
+ 'http://dict.okb.com/search.asp?ABC=S', 'http://dict.okb.com/search.asp?ABC=T', 'http://dict.okb.com/search.asp?ABC=U', 
+ 'http://dict.okb.com/search.asp?ABC=V', 'http://dict.okb.com/search.asp?ABC=W', 'http://dict.okb.com/search.asp?ABC=X', 
+ 'http://dict.okb.com/search.asp?ABC=Y', 'http://dict.okb.com/search.asp?ABC=Z']
+```

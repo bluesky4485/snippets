@@ -1,0 +1,33 @@
+---
+title: 数组元素排序
+---
+
+```
+def main():
+    a = map(int, raw_input().split())
+    print ' '.join(map(str, sorted(a)))
+ 
+if __name__ == '__main__':
+    main()
+```
+
+接收输入，然后再排序得出结果，上面的代码未用set去重，可以参考下面的代码，加上set后去重。
+
+
+```
+import random
+a = [random.randint(0, 64) for x in xrange(10)]
+print a
+b=sorted(a)[:5]
+print b
+c=sorted(set(a))[:5]
+print c
+```
+
+取数组中最小的5个数，重复和去重问题。要去重可以使用set去重。去重和不去重输出结果如下：
+
+```
+[60, 51, 24, 21, 7, 37, 24, 31, 39, 7]
+[7, 7, 21, 24, 24]
+[7, 21, 24, 31, 37]
+```
