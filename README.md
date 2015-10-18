@@ -9,7 +9,7 @@
 
 前面2项改了就算是自己搭建完成了。
 
-然后在github上面提pull request操作两个分支的合并去更新主分支的内容。
+在切换到gh-pages分支后再**git merge pull**操作两个分支的合并去更新主分支的内容。
 
 想要贡献代码的话也可以将pull分支中的代码提pull request到fork的上级（或原作者）的gh-pages分支，这样贡献代码的话就不会影响到自己搭建。
 
