@@ -1,0 +1,17 @@
+---
+title: python常用正则表达式收集
+---
+
+```
+import re
+# 去掉所有html标签
+re.compile(r'<[^>]+>', re.S)   
+dd = dr.sub('', content)
+
+# 去掉所有\r、\n、空格字符串
+re.sub('\r|\n| ','',area_info)  
+
+
+```
+
+\d*  匹配一位或多位数字

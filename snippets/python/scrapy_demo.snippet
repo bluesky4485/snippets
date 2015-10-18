@@ -1,0 +1,97 @@
+---
+title: scrapy抓取w3school部分内容的demo
+---
+
+主要演示使用scrapy做抓取的流程
+
+## Items
+抓取结果的数据定义：
+```
+class W3schoolItem(scrapy.Item):
+    title = scrapy.Field()
+    link = scrapy.Field()
+    desc = scrapy.Field()
+```
+
+## Spider
+具体的抓取逻辑处理类，定义了抓取的起始页面地址，以及根据css或xpath进行元素获取的逻辑
+```
+import scrapy
+from crawler1.items import W3schoolItem
+from scrapy import log
+
+class W3schoolSpider(scrapy.Spider):
+    name = "w3school"
+    allowed_domains = ["w3school.com.cn"]
+    start_urls = [
+        "http://www.w3school.com.cn/xml/xml_syntax.asp"
+    ]
+
+    def parse(self, response):
+        sites = response.xpath('//div[@id="navsecond"]/div[@id="course"]/ul[1]/li')
+        items = []
+        for site in sites:
+            item = W3schoolItem()
+
+            title = site.xpath('a/text()').extract()
+            link = site.xpath('a/@href').extract()
+            desc = site.xpath('a/@title').extract()
+
+            item['title'] = [t.encode('utf-8') for t in title]
+            item['link'] = [l.encode('utf-8') for l in link]
+            item['desc'] = [d.encode('utf-8') for d in desc]
+            items.append(item)
+
+            #记录
+            log.msg("Appending item...",level=log.INFO)
+
+
+        log.msg("Append done.",level=log.INFO)
+        return items
+```
+## pipeline
+自定义一个pipeline将抓取结果存储成json文件
+```
+class JsonWriterPipeline(object):
+
+    def __init__(self):
+        self.file = codecs.open('items.json', 'wb','utf-8')
+
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + "\n"
+        self.file.write(line.decode("unicode_escape"))
+        return item
+```
+
+> 注意上面代码中针对编码的处理，以上的代码是可以正常写入中文到文件中的。
+
+若想将抓取结果存储到数据库中，可以自己再定义一个mysql的pipeline，然后在settings中也配置上mysql的pipeline。
+
+## settings
+最后在settings中启用pipeline
+```
+ITEM_PIPELINES = {
+     'crawler1.JsonWriterPipeline.JsonWriterPipeline': 300,
+}
+```
+## 启动抓取
+```
+scrapy crawl w3school
+```
+
+## 抓取结果
+```
+{"title": ["XML 教程"], "link": ["/xml/index.asp"], "desc": ["XML 教程"]}
+{"title": ["XML 简介"], "link": ["/xml/xml_intro.asp"], "desc": ["XML 简介"]}
+{"title": ["XML 用途"], "link": ["/xml/xml_usedfor.asp"], "desc": ["XML 的用途"]}
+{"title": ["XML 树结构"], "link": ["/xml/xml_tree.asp"], "desc": ["XML 树结构"]}
+{"title": ["XML 语法"], "link": ["/xml/xml_syntax.asp"], "desc": ["XML 语法规则"]}
+{"title": ["XML 元素"], "link": ["/xml/xml_elements.asp"], "desc": ["XML 元素"]}
+{"title": ["XML 属性"], "link": ["/xml/xml_attributes.asp"], "desc": ["XML 属性"]}
+{"title": ["XML 验证"], "link": ["/xml/xml_dtd.asp"], "desc": ["XML 验证"]}
+{"title": ["XML 验证器"], "link": ["/xml/xml_validator.asp"], "desc": ["XML 验证器"]}
+{"title": ["XML 浏览器"], "link": ["/xml/xml_browsers.asp"], "desc": ["XML 浏览器支持"]}
+{"title": ["XML 查看"], "link": ["/xml/xml_view.asp"], "desc": ["查看 XML 文件"]}
+{"title": ["XML CSS"], "link": ["/xml/xml_display.asp"], "desc": ["使用 CSS 显示 XML"]}
+{"title": ["XML XSLT"], "link": ["/xml/xml_xsl.asp"], "desc": ["使用 XSLT 显示 XML"]}
+```

@@ -1,0 +1,50 @@
+---
+title: URL参数解析
+---
+
+```
+import urlparse
+def qs(url):
+    query = urlparse.urlparse(url).query
+    return dict([(k,v[0]) for k,v in urlparse.parse_qs(query).items()])
+
+print qs('http://url/api?param=2&param2=4') 
+```
+
+返回的结果:{'param':'2','param2':'4'} 
+
+
+```
+def url_replacer(url, _id, target_value):
+    c_url_list = list(urlparse.urlparse(url))
+    queries = [q.split('=') for q in c_url_list[4].split('&')]
+    queries[_id - 1][1] = target_value
+    c_url_list[4] = '&'.join(map(lambda l: '='.join(l), queries))
+    return urlparse.urlunparse(c_url_list)
+
+print url_replacer('http://abc.download.com/Step1.asp?s_id=1&page=1&s_sort=id', 2, '3')
+```
+
+修改url地址中第_id个参数的值为target_value。
+
+返回的结果：http://abc.download.com/Step1.asp?s_id=1&page=*3*&s_sort=id
+
+```
+def url_add_params(url, **params):
+    """ 在网址中加入新参数 """
+    pr = urlparse.urlparse(url)
+    query = dict(urlparse.parse_qsl(pr.query))
+    query.update(params)
+    prlist = list(pr)
+    prlist[4] = urllib.urlencode(query)
+    return urlparse.ParseResult(*prlist).geturl()
+
+url = 'http://bbs.163.com/viewthread.php?tid=1660&rpid=5798&ordertype=0&page=1#pid5798'
+print url_add_params(url, token=123, site="bbs")
+
+```
+
+输出结果：
+```
+http://bbs.163.com/viewthread.php?rpid=5798&token=123&tid=1660&ordertype=0&page=1&site=bbs#pid5798
+```
