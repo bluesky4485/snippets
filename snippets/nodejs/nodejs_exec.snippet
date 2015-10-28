@@ -1,0 +1,16 @@
+---
+title: nodejs调用其他可执行程序
+---
+以下代码调用本机可执行程序，并输出可执行程序的执行结果：
+```
+var exec = require('child_process').exec;
+exec('npm -v',function(error, stdout, stderr){
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+    if (error !== null) {
+        console.log('exec error: ' + error);
+    }
+});
+```
+
+可用来执行youtube_dl或者git pull等命令。
