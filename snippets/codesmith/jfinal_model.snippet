@@ -1,0 +1,154 @@
+---
+title: 用CodeSmith基于数据库表结构生成JFinal的model类
+---
+
+```
+<%-- 
+Name: JFinal model
+Author: HuangKe
+Description: base on mysql db schema
+--%>
+<%@ Template Language="C#" TargetLanguage="Java" %>
+<%@ Property Name="packageName" Default="" Type="System.String" %>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema" Category="Context" Description="Table that the object is based on." %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+package <%= packageName %>;
+
+import com.jfinal.plugin.activerecord.Model;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.util.Date;
+
+import com.jfinal.log.Logger;
+
+public class <%= GetClassName(SourceTable) %> extends Model<<%= GetClassName(SourceTable) %>> {
+
+    private static final Logger LOG = Logger.getLogger(<%= GetClassName(SourceTable) %>.class);
+
+    public static final <%= GetClassName(SourceTable) %> DAO = new <%= GetClassName(SourceTable) %>();
+
+
+    public Page<<%= GetClassName(SourceTable) %>> page(int pageNumber, int pageSize) {
+        return paginate(pageNumber, pageSize, "select *", "from <%=SourceTable%> order by id asc");
+    }
+    
+    <% for (int i = 0; i < SourceTable.Columns.Count; i++) { %>
+    public static final String column_<%= StringUtil.ToCamelCase(SourceTable.Columns[i].Name) %> = "<%= SourceTable.Columns[i].Name %>";
+    private String <%= StringUtil.ToCamelCase(SourceTable.Columns[i].Name) %>;
+    
+    public void set<%= StringUtil.ToPascalCase(SourceTable.Columns[i].Name) %>(<%= GetVariableType(SourceTable.Columns[i]) %> <%= StringUtil.ToCamelCase(SourceTable.Columns[i].Name) %>) {
+        set(column_<%= StringUtil.ToCamelCase(SourceTable.Columns[i].Name) %>, <%= StringUtil.ToCamelCase(SourceTable.Columns[i].Name) %>);
+    }
+    
+    public <T> T get<%= StringUtil.ToPascalCase(SourceTable.Columns[i].Name) %>() {
+        return get(column_<%= StringUtil.ToCamelCase(SourceTable.Columns[i].Name) %>);
+    }
+    
+    <%}%>
+}
+
+<script runat="template">
+
+public string GetClassName(TableSchema table)
+{
+    string tb="";
+	if (table.Name.EndsWith("s"))
+	{
+		tb= table.Name.Substring(0, table.Name.Length - 1);
+	}
+	else
+	{
+		tb= table.Name;
+	}
+    return StringUtil.ToPascalCase(tb);
+}
+
+public string GetVariableType(ColumnSchema column)
+{
+  switch (column.DataType)
+	{
+		case DbType.Int32:
+		{
+			return "Integer";
+		}
+		case DbType.Date:
+		case DbType.DateTime:
+		case DbType.DateTime2:
+		{
+			return "Date";
+		}
+		default:
+		{
+			return "String";
+		}
+	}
+}
+</script>
+```
+
+上面的模版是针对单个表的，如果想一次性将多个表生成model文件到指定目录可以使用下面的模版代码配合（调用）上面的模版：
+```
+<%-- 
+Name: generate models from tables
+Author: HuangKe
+Description: call other templete
+--%>
+<%@ Template Language="C#" TargetLanguage="Text" %>
+<%@ Property Name="SourceTables" Type="SchemaExplorer.TableSchemaCollection" Category="Context" Description="Table that the object is based on." %>
+<%@ Property Name="packageName" Default="" Type="System.String" %>
+<%@ Register Template="JFinal_model.cst" MergeProperties="False"  ExcludeProperties="" Name="model"%>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%
+    this.SaveEntityClasses();
+%>
+<script runat="template">
+private string templateOutputDirectory=@"E:\";
+    
+    [Editor(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))] 
+    [Optional, NotChecked]
+    [Category("01. Getting Started - Required")]
+    [Description("The directory to output the results to.")]
+    [DefaultValue("")]
+    public string OutputDirectory 
+    { 
+        get
+        {
+             return templateOutputDirectory;
+        }
+        set
+        {
+            if (value.EndsWith("\\")) value = value.Substring(0, value.Length - 1);
+            templateOutputDirectory = value;
+        } 
+    }
+public void SaveEntityClasses()
+{
+     model m =new model();
+     foreach(TableSchema t in SourceTables) {
+        m.SetProperty("SourceTable",t);
+        m.SetProperty("packageName",packageName);
+        m.RenderToFile(this.templateOutputDirectory + "\\"  + GetClassName(t)+".java",true);
+    }
+}
+
+public string GetClassName(TableSchema table)
+{
+    string tb="";
+	if (table.Name.EndsWith("s"))
+	{
+		tb= table.Name.Substring(0, table.Name.Length - 1);
+	}
+	else
+	{
+		tb= table.Name;
+	}
+    return StringUtil.ToPascalCase(tb);
+}
+</script>
+```
