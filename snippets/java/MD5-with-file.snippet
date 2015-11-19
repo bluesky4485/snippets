@@ -1,0 +1,40 @@
+---
+title: 利用commons codec对文件做md5摘要
+---
+主体是用commons codec对文件做摘要，使用了commons io关闭流，这个其实完全没必要用commons io的，看看closeQuietly的代码就知道为啥了。
+主要是getFileMD5在文件过大时容易出现内存溢出的问题，所以有个专门针对大文件的md5方法。另外，经简单测试大概超过30M以后，使用getLargeFileMD5速度上会快一点。这个时间真的是仅做了非常简单，有限几次的测试得出来的结果。
+```
+/**
+ * 针对普通文件计算md5方法
+ * 若文件较大(大于30M)，请使用getLargeFileMD5速度会比较快一点
+ * @param file
+ * @return
+ * @throws FileNotFoundException
+ * @throws IOException
+ */
+public static String getFileMD5(File file) throws FileNotFoundException, IOException {
+    FileInputStream fis = new FileInputStream(file);
+    String md5 = DigestUtils.md5Hex(IOUtils.toByteArray(fis));
+    IOUtils.closeQuietly(fis);
+    return md5;
+}
+
+/**
+ *  针对大文件计算md5值的方法
+ * @param file
+ * @return
+ * @throws FileNotFoundException
+ * @throws IOException
+ */
+public static String getLargeFileMD5(File file) throws FileNotFoundException, IOException {
+    FileInputStream fis = new FileInputStream(file);
+    byte[] buffer = new byte[8192];
+    MessageDigest md5 = DigestUtils.getMd5Digest();
+    int len;
+    while ((len = fis.read(buffer)) != -1) {
+        md5.update(buffer, 0, len);
+    }
+    IOUtils.closeQuietly(fis);
+    return Hex.encodeHexString(md5.digest());
+}
+```
