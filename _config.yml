@@ -3,7 +3,7 @@ markdown: rdiscount
 permalink: /:year/:month/:day/:title/
 timezone: Asia/Shanghai
 
-home: http://www.huangketeck.com/
+home: http://www.huangketech.com/
 demo: http://demo.barretlee.com/
 base: http://snippets.huangketech.com
 weibo: http://weibo.com/173248656
