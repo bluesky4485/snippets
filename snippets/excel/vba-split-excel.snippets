@@ -1,0 +1,24 @@
+---
+title: 利用vba按行拆分大数据量的excel
+---
+打开excel后，alt + F11打开vba的编辑窗口，双击大数据量的sheet，在打开的空白代码界面贴入下列代码，点击运行，即可将这个excel文件按代码中的指定行数拆分成多个excel文件。
+```
+Sub cfb()
+Dim r, c, i, WJhangshu, WJshu, bt As Long
+r = Range("A" & Rows.Count).End(xlUp).Row
+c = Cells(1, Columns.Count).End(xlToLeft).Column
+bt = 1 '标题行数
+WJhangshu = 20000 '每个文件的行数
+WJshu = IIf(r - bt Mod 20000, Int((r - bt) / WJhangshu), Int((r - bt) / WJhangshu) + 1)
+For i = 1 To WJshu
+    Workbooks.Add
+    Application.DisplayAlerts = False
+    ActiveWorkbook.SaveAs Filename:=ThisWorkbook.Path & "\" & Format(i, String(Len(WJshu), 0)) & ".xlsx"
+    Application.DisplayAlerts = True
+    ThisWorkbook.ActiveSheet.Range("A1").Resize(bt, c).Copy ActiveSheet.Range("A1")
+    ThisWorkbook.ActiveSheet.Range("A" & bt + i * WJhangshu + 1).Resize(WJhangshu, c).Copy _
+     ActiveSheet.Range("A" & bt + 1)
+    ActiveWorkbook.Close True
+Next
+End Sub
+```
