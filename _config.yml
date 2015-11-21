@@ -3,13 +3,13 @@ markdown: rdiscount
 permalink: /:year/:month/:day/:title/
 timezone: Asia/Shanghai
 
-home: http://www.barretlee.com/
+home: http://www.huangketeck.com/
 demo: http://demo.barretlee.com/
 base: http://snippets.huangketech.com
 weibo: http://weibo.com/173248656
 edit_path: https://github.com/bluesky4485/snippets/edit/gh-pages
 new_path: https://github.com/bluesky4485/snippets/new/gh-pages/snippets
-author: 小胡子哥
-author_en: Barret Lee
-email: barret.china@gmail.com
+author: 黄科
+author_en: Kole Hank
+email: kolehank@gmail.com
 author_info: <a href="http://www.barretlee.com">小胡子哥</a>
