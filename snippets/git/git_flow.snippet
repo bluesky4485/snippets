@@ -1,0 +1,26 @@
+---
+title: gitflow的基本使用
+---
+
+## GUI形式
+* 使用SourceTree，clone一个项目回来后，直接点GitFlow，初始化git库，然后会自动切换到develop分支上。
+* 要开发新功能时点击gitflow，选择新功能，为新的功能分支命名，确认后直接切换到了功能分支上面。
+* 在进行具体的功能开发之后，将代码commit到功能分支上。
+* 功能开发完成，提交之后，点击gitflow，点击完成功能分支开发，则会默认将功能分支的内容合并到develop分支上，并删除当前的功能分支。
+* 如果此时别人已经有代码提交到develop分支的话，在进行git pull的时候可能就会有冲突，此时需要自己解决冲突后commit一下，确认解决了冲突，再将包含了自己功能的代码push到远端的develop分支。
+> git pull的时候是否需要使用rebase模式，这个可以试一下使用rebase和不使用rebase时对commit history的影响，有些时候为了保持commit history的整体性，会采用rebase方式，避免每次分支的合并都进行merge操作产生一个新的commit。具体rebase是使用可以查阅相关资料。
+
+## 命令行形式
+```
+cd gitrepo
+# 初始化工作目录(一直回车即可)
+git flow init 
+# 开始创建新的需求分支,目的修改image
+git flow feature start editimage #这时项目会自动切换 feature/editimage分支
+# 更改部分代码后
+# git commit -a -m "修改完了"
+# 完成开发分支合并develop(自动)
+git flow feature finish editimage
+# 发布到远程开发分支
+git push origin develop
+```
