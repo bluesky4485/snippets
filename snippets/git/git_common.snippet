@@ -34,3 +34,22 @@ git diff
 git pull
 
 ```
+
+创建tag
+```
+git tag
+git tag -a v1.0 -m 'version 1.0'
+git push origin --tags
+```
+>`git push`是不会将tag上传到服务器的。
+
+多人协作时需要经常拉取别人的代码进行本地合并时，想维持树的整洁的话，就必须在`git push`之前先`git fetch`再`git rebase`
+```
+git stash     // 缓存本地的修改
+git fetch origin master     //获取远程仓库内容
+git rebase origin/master     //rebase树，改写commit history
+git stash pop                    //重新应用本地的修改
+
+git stash clear               //清除stash
+git push                         //提交
+```
